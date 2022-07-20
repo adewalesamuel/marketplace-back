@@ -8,13 +8,14 @@ use App\Models\Client;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\StoreClientRequest;
 
 class ApiClientAuthController extends Controller
 {
     public function login(Request $request) {
         $credentials = $request->only("email", "password");
     
-        if (!Auth::guard('admin')->once($credentials)) {
+        if (!Auth::guard('clients')->once($credentials)) {
             $data = [
                 'error' => true,
                 'message' => "Mail ou mot de passe incorrect"
@@ -27,11 +28,37 @@ class ApiClientAuthController extends Controller
 
         $data = [
             "success" => true,
-            "client" => $client
+            "client" => $client,
+            "tk" => $client->api_token
         ];
 
         return response()->json($data);
+    }
 
+    public function register(StoreClientRequest $request) {
+        $validated = $request->validated();
+
+        $client = new Client;
+
+        $client->name = $validated['name'] ?? null;
+		$client->email = $validated['email'] ?? null;
+		$client->password = $validated['password'] ?? null;
+		$client->phone = $validated['phone'] ?? null;
+		$client->country = $validated['country'] ?? null;
+		$client->city = $validated['city'] ?? null;
+		$client->address = $validated['address'] ?? null;
+		$client->is_active = $validated['is_active'] ?? null;
+		$client->img_url = $validated['img_url'] ?? null;
+        $client->api_token = Str::random(60);
+		
+        $client->save();
+
+        $data = [
+            'success'  => true,
+            'client'   => $client
+        ];
+        
+        return response()->json($data);
     }
 
     public function logout(Request $request) {

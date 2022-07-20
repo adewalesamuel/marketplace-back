@@ -2,10 +2,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Client;
+use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreClientRequest;
 use App\Http\Requests\UpdateClientRequest;
+use App\Http\Requests\StoreOrderRequest;
 use Illuminate\Support\Str;
+use App\Http\Auth;
 
 
 class ClientController extends Controller
@@ -57,7 +60,7 @@ class ClientController extends Controller
 		$client->address = $validated['address'] ?? null;
 		$client->is_active = $validated['is_active'] ?? null;
 		$client->img_url = $validated['img_url'] ?? null;
-		$client->api_token = $validated['api_token'] ?? null;
+        $client->api_token = Str::random(60);
 		
         $client->save();
 
@@ -116,7 +119,6 @@ class ClientController extends Controller
 		$client->address = $validated['address'] ?? null;
 		$client->is_active = $validated['is_active'] ?? null;
 		$client->img_url = $validated['img_url'] ?? null;
-		$client->api_token = $validated['api_token'] ?? null;
 		
         $client->save();
 
@@ -143,6 +145,40 @@ class ClientController extends Controller
             'client' => $client
         ];
 
+        return response()->json($data);
+    }
+
+    public function orders(Request $request) {
+        $user = Auth::getUser($request, Auth::CLIENT);
+        $order = Order::where('client_id', $user->id)
+        ->with(['article'])->paginate(env('PAGINATE'));
+
+        $data = [
+            "success" => true,
+            "order" => $order
+        ];
+
+        return response()->json($data);
+    }
+
+    public function storeOrder(StoreOrderRequest $request) {
+        $validated = $request->validated();
+        $user = Auth::getUser($request, Auth::CLIENT);
+        $order = new Order;
+
+        $order->article_id = $validated['article_id'] ?? null;
+		$order->client_id = $user->id ?? null;
+		$order->quantity = $validated['quantity'] ?? null;
+		$order->price = $validated['price'] ?? null;
+		$order->payment_method = $validated['payment_method'] ?? null;
+		
+        $order->save();
+
+        $data = [
+            'success' => true,
+            'order'   => $order
+        ];
+        
         return response()->json($data);
     }
 }

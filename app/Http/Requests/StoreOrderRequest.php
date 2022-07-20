@@ -25,7 +25,7 @@ class StoreOrderRequest extends FormRequest
     {
         return [
             'article_id' => 'required|integer|exists:articles,id',
-			'client_id' => 'required|integer|exists:clients,id',
+			'client_id' => 'nullable|integer|exists:clients,id',
 			'quantity' => 'nullable|integer',
 			'price' => 'required|integer',
 			'payment_status' => 'nullable|string',

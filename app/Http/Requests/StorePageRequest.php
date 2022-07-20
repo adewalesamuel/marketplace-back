@@ -24,7 +24,7 @@ class StorePageRequest extends FormRequest
     public function rules()
     {
         return [
-            'artisan_id' => 'required|integer',
+            'artisan_id' => 'nullable|integer|exists:artisans,id|unique:pages,artisan_id',
 			'content' => 'nullable|string',
 			'title' => 'required|string',
             'is_active' => 'nullable|boolean'

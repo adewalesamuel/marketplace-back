@@ -8,13 +8,14 @@ use App\Models\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\StoreArtisanRequest;
 
 class ApiArtisanAuthController extends Controller
 {
     public function login(Request $request) {
         $credentials = $request->only("email", "password");
     
-        if (!Auth::guard('admin')->once($credentials)) {
+        if (!Auth::guard('artisans')->once($credentials)) {
             $data = [
                 'error' => true,
                 'message' => "Mail ou mot de passe incorrect"
@@ -27,11 +28,39 @@ class ApiArtisanAuthController extends Controller
 
         $data = [
             "success" => true,
-            "artisan" => $artisan
+            "artisan" => $artisan,
+            'tk' => $artisan->api_token,
         ];
 
         return response()->json($data);
+    }
 
+    public function register(StoreArtisanRequest $request)
+    {
+        $validated = $request->validated();
+
+        $artisan = new Artisan;
+
+        $artisan->name = $validated['name'] ?? null;
+		$artisan->email = $validated['email'] ?? null;
+		$artisan->password = $validated['password'] ?? null;
+		$artisan->phone = $validated['phone'] ?? null;
+		$artisan->country = $validated['country'] ?? null;
+		$artisan->city = $validated['city'] ?? null;
+		$artisan->postal_code = $validated['postal_code'] ?? null;
+		$artisan->address = $validated['address'] ?? null;
+		$artisan->is_active = $validated['is_active'] ?? null;
+		$artisan->img_url = $validated['img_url'] ?? null;
+        $artisan->api_token = Str::random(60);
+		
+        $artisan->save();
+
+        $data = [
+            'success'       => true,
+            'artisan'   => $artisan,
+        ];
+        
+        return response()->json($data);
     }
 
     public function logout(Request $request) {

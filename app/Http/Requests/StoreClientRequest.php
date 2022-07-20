@@ -27,7 +27,7 @@ class StoreClientRequest extends FormRequest
             'name' => 'required|string',
 			'email' => 'required|string|unique:clients',
 			'password' => 'required|string',
-			'phone' => 'required|string',
+			'phone' => 'required|string|unique:clients',
 			'country' => 'nullable|string',
 			'city' => 'nullable|string',
 			'address' => 'nullable|string',

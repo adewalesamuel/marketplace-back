@@ -14,4 +14,14 @@ class Article extends Model
 	{
 		return $this->belongsTo(Artisan::class); 
 	}
+
+	/**
+	 * Get the category that owns the Article
+	 *
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
+	public function category()
+	{
+		return $this->belongsTo(Category::class);
+	}
 }

@@ -2,6 +2,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Article;
+use App\Models\Artisan;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
@@ -19,7 +21,7 @@ class CategoryController extends Controller
     {
         $data = [
             'success' => true,
-            'categorys' => Category::where('id', '>', -1)
+            'categories' => Category::where('id', '>', -1)
             ->orderBy('created_at', 'desc')->get()
         ];
 
@@ -50,7 +52,7 @@ class CategoryController extends Controller
 
         $category->name = $validated['name'] ?? null;
 		$category->description = $validated['description'] ?? null;
-		$category->slug = $validated['slug'] ?? null;
+		$category->slug = Str::slug($validated['name']);
 		$category->parent_category = $validated['parent_category'] ?? null;
 		$category->img_url = $validated['img_url'] ?? null;
 		
@@ -104,7 +106,7 @@ class CategoryController extends Controller
 
         $category->name = $validated['name'] ?? null;
 		$category->description = $validated['description'] ?? null;
-		$category->slug = $validated['slug'] ?? null;
+		$category->slug = Str::slug($validated['name']);
 		$category->parent_category = $validated['parent_category'] ?? null;
 		$category->img_url = $validated['img_url'] ?? null;
 		
@@ -133,6 +135,38 @@ class CategoryController extends Controller
             'category' => $category
         ];
 
+        return response()->json($data);
+    }
+
+    public function artisans(Request $request, string $slug) {
+        $category = Category::where('slug', $slug)->first();
+        $artisan_ids = collect(Article::where('category_id', $category->id)->get())
+        ->map(function($article) {
+            return $article->artisan_id;
+        });
+        $artisans = Artisan::whereIn('id', [...$artisan_ids])
+        ->with(['page'])->orderBy('created_at', 'desc')
+        ->paginate(env('PAGINATE'));
+
+        $data = [
+            'success' => true,
+            'artisans' => $artisans
+        ];
+        
+        return response()->json($data);
+    }
+
+    public function articles(Request $request, string $slug) {
+        $category = Category::where('slug', $slug)->first();
+        $articles = Article::where('category_id', $category->id)
+        ->with(['category', 'artisan'])->orderBy('created_at', 'desc')
+        ->paginate(env('PAGINATE'));
+
+        $data = [
+            "success" => true,
+            "articles" => $articles
+        ];
+        
         return response()->json($data);
     }
 }

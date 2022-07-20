@@ -14,7 +14,7 @@ class ApiAdminAuthController extends Controller
     public function login(Request $request) {
         $credentials = $request->only("email", "password");
     
-        if (!Auth::guard('admin')->once($credentials)) {
+        if (!Auth::guard('admins')->once($credentials)) {
             $data = [
                 'error' => true,
                 'message' => "Mail ou mot de passe incorrect"
@@ -27,7 +27,8 @@ class ApiAdminAuthController extends Controller
 
         $data = [
             "success" => true,
-            "admin" => $admin
+            "admin" => $admin,
+            'tk' => $admin->api_token,
         ];
 
         return response()->json($data);

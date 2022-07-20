@@ -14,8 +14,8 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'web',
-        'passwords' => 'users',
+        'guard' => 'clients',
+        'passwords' => 'clients',
     ],
 
     /*
@@ -40,6 +40,18 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'clients' => [
+            'driver' => 'session',
+            'provider' => 'clients',
+        ],
+        'admins' => [
+            'driver' => 'session',
+            'provider' => 'admins',
+        ],
+        'artisans' => [
+            'driver' => 'session',
+            'provider' => 'artisans',
+        ],
     ],
 
     /*
@@ -60,9 +72,17 @@ return [
     */
 
     'providers' => [
-        'users' => [
+        'clients' => [
             'driver' => 'eloquent',
-            'model' => App\Models\User::class,
+            'model' => App\Models\Client::class,
+        ],
+        'admins' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Admin::class,
+        ],
+        'artisans' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Artisan::class,
         ],
 
         // 'users' => [
@@ -87,8 +107,20 @@ return [
     */
 
     'passwords' => [
-        'users' => [
-            'provider' => 'users',
+        'clients' => [
+            'provider' => 'clients',
+            'table' => 'password_resets',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+        'admins' => [
+            'provider' => 'admins',
+            'table' => 'password_resets',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+        'artisans' => [
+            'provider' => 'artisans',
             'table' => 'password_resets',
             'expire' => 60,
             'throttle' => 60,

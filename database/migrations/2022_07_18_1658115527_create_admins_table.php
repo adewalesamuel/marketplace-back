@@ -20,7 +20,7 @@ class CreateAdminsTable extends Migration
 			$table->string('password');
 			$table->string('role')->nullable();
 			$table->string('img_url')->nullable();
-			$table->string('api_token');
+			$table->string('api_token')->nullable();
 			$table->timestamp('email_verified_at')->nullable();
 			$table->rememberToken();
 			$table->softDeletes();

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreAdminRequest;
 use App\Http\Requests\UpdateAdminRequest;
 use Illuminate\Support\Str;
+use App\Http\Auth;
 
 
 class AdminController extends Controller
@@ -15,8 +16,9 @@ class AdminController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+
         $data = [
             'success' => true,
             'admins' => Admin::where('id', '>', -1)
@@ -53,7 +55,8 @@ class AdminController extends Controller
 		$admin->password = $validated['password'] ?? null;
 		$admin->role = $validated['role'] ?? null;
 		$admin->img_url = $validated['img_url'] ?? null;
-		$admin->api_token = $validated['api_token'] ?? null;
+        $admin->api_token = Str::random(60);
+
 		
         $admin->save();
 
@@ -108,7 +111,7 @@ class AdminController extends Controller
 		$admin->password = $validated['password'] ?? null;
 		$admin->role = $validated['role'] ?? null;
 		$admin->img_url = $validated['img_url'] ?? null;
-		$admin->api_token = $validated['api_token'] ?? null;
+        $admin->api_token = Str::random(60);
 		
         $admin->save();
 

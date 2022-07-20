@@ -15,13 +15,17 @@ class CreateArticlesTable extends Migration
     {
         Schema::create('articles', function (Blueprint $table) {
             $table->id();
-			$table->string('name')->unique();
+			$table->string('name');
+			$table->string('slug')->unique();
 			$table->text('description')->nullable();
 			$table->enum('type', ['product', 'service']);
 			$table->integer('quantity')->nullable()->default(1);
 			$table->integer('price');
 			$table->integer('discount')->nullable();
 			$table->foreignId('artisan_id')
+			->constrained()
+			->onDelete('cascade');
+			$table->foreignId('category_id')
 			->constrained()
 			->onDelete('cascade');
 			$table->string('attributes')->nullable();

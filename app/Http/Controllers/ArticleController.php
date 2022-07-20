@@ -19,7 +19,7 @@ class ArticleController extends Controller
     {
         $data = [
             'success' => true,
-            'articles' => Article::where('id', '>', -1)
+            'articles' => Article::where('id', '>', -1)->with(['artisan', 'category'])
             ->orderBy('created_at', 'desc')->get()
         ];
 
@@ -49,16 +49,16 @@ class ArticleController extends Controller
         $article = new Article;
 
         $article->name = $validated['name'] ?? null;
+        $article->slug = Str::slug($validated['name']) . random_int(1000, 9999);
 		$article->description = $validated['description'] ?? null;
 		$article->type = $validated['type'] ?? null;
 		$article->quantity = $validated['quantity'] ?? null;
 		$article->price = $validated['price'] ?? null;
 		$article->discount = $validated['discount'] ?? null;
 		$article->artisan_id = $validated['artisan_id'] ?? null;
+		$article->category_id = $validated['category_id'] ?? null;
 		$article->attributes = $validated['attributes'] ?? null;
-		$article->period = $validated['period'] ?? null;
-		$article->address = $validated['address'] ?? null;
-		$article->img_url = $validated['img_url'] ?? null;
+		$article->img_urls = $validated['img_urls'] ?? null;
 		
         $article->save();
 
@@ -78,6 +78,9 @@ class ArticleController extends Controller
      */
     public function show(Article $article)
     {
+        $article = Article::where('id', $article->id)
+        ->with(['artisan', 'category'])->first();
+        
         $data = [
             'success' => true,
             'article' => $article
@@ -115,10 +118,9 @@ class ArticleController extends Controller
 		$article->price = $validated['price'] ?? null;
 		$article->discount = $validated['discount'] ?? null;
 		$article->artisan_id = $validated['artisan_id'] ?? null;
+		$article->category_id = $validated['category_id'] ?? null;
 		$article->attributes = $validated['attributes'] ?? null;
-		$article->period = $validated['period'] ?? null;
-		$article->address = $validated['address'] ?? null;
-		$article->img_url = $validated['img_url'] ?? null;
+		$article->img_urls = $validated['img_urls'] ?? null;
 		
         $article->save();
 

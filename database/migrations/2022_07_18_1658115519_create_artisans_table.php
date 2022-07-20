@@ -25,7 +25,7 @@ class CreateArtisansTable extends Migration
 			$table->string('address')->nullable();
 			$table->boolean('is_active')->nullable()->default(true);
 			$table->string('img_url')->nullable();
-			$table->string('api_token');
+			$table->string('api_token')->nullable();
 			$table->softDeletes();
 			$table->timestamps();
         });

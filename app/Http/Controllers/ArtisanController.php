@@ -2,10 +2,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Artisan;
+use App\Models\Page;
+use App\Models\Article;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreArtisanRequest;
 use App\Http\Requests\UpdateArtisanRequest;
+use App\Http\Requests\StorePageRequest;
+use App\Http\Requests\UpdatePageRequest;
+use App\Http\Requests\StoreArticleRequest;
+use App\Http\Requests\UpdateArticleRequest;
 use Illuminate\Support\Str;
+use App\Http\Auth;
 
 
 class ArtisanController extends Controller
@@ -20,7 +27,7 @@ class ArtisanController extends Controller
         $data = [
             'success' => true,
             'artisans' => Artisan::where('id', '>', -1)
-            ->orderBy('created_at', 'desc')->get()
+            ->with(['page'])->orderBy('created_at', 'desc')->get()
         ];
 
         return response()->json($data);
@@ -58,7 +65,7 @@ class ArtisanController extends Controller
 		$artisan->address = $validated['address'] ?? null;
 		$artisan->is_active = $validated['is_active'] ?? null;
 		$artisan->img_url = $validated['img_url'] ?? null;
-		$artisan->api_token = $validated['api_token'] ?? null;
+        $artisan->api_token = Str::random(60);
 		
         $artisan->save();
 
@@ -118,7 +125,6 @@ class ArtisanController extends Controller
 		$artisan->address = $validated['address'] ?? null;
 		$artisan->is_active = $validated['is_active'] ?? null;
 		$artisan->img_url = $validated['img_url'] ?? null;
-		$artisan->api_token = $validated['api_token'] ?? null;
 		
         $artisan->save();
 
@@ -143,6 +149,118 @@ class ArtisanController extends Controller
         $data = [
             'success' => true,
             'artisan' => $artisan
+        ];
+
+        return response()->json($data);
+    }
+
+    public function storePage(StorePageRequest $request) {
+        $user = Auth::getUser($request, Auth::ARTISAN);
+        $validated = $request->validated();
+        $page = new Page;
+
+        $page->content = $validated['content'] ?? null;
+		$page->title = $validated['title'] ?? null;
+		$page->artisan_id = $user->id;
+		
+        $page->save();
+
+        $data = [
+            'success'=> true,
+            'page'   => $page
+        ];
+
+        return response()->json($data);
+    }
+   
+    public function updatePage(UpdatePageRequest $request, Page $page) {
+        $user = Auth::getUser($request, Auth::ARTISAN);
+        $validated = $request->validated();
+        $page = new Page;
+
+        $page->content = $validated['content'] ?? null;
+		$page->title = $validated['title'] ?? null;
+        $page->artisan_id = $user->id;
+		
+        $page->save();
+
+        $data = [
+            'success'=> true,
+            'page'   => $page
+        ];
+
+        return response()->json($data);
+    }
+
+    public function storeArticle(StoreArticleRequest $request) {
+        $user = Auth::getUser($request, Auth::ARTISAN);
+        $validated = $request->validated();
+        $article = new Article;
+
+        $article->name = $validated['name'] ?? null;
+        $article->slug = Str::slug($validated['name']) . random_int(1000, 9999);
+		$article->description = $validated['description'] ?? null;
+		$article->type = $validated['type'] ?? null;
+		$article->quantity = $validated['quantity'] ?? null;
+		$article->price = $validated['price'] ?? null;
+		$article->discount = $validated['discount'] ?? null;
+		$article->category_id = $validated['category_id'] ?? null;
+		$article->attributes = $validated['attributes'] ?? null;
+		$article->img_urls = $validated['img_urls'] ?? null;
+        $article->artisan_id = $user->id;
+        
+        $article->save();
+
+        $data = [
+            'success'=> true,
+            'article'   => $article
+        ];
+
+        return response()->json($data);
+    }
+
+    public function updateArticle(UpdateArticleRequest $request, Article $article) {
+        $user = Auth::getUser($request, Auth::ARTISAN);
+        $validated = $request->validated();
+
+        $article->name = $validated['name'] ?? null;
+		$article->description = $validated['description'] ?? null;
+		$article->type = $validated['type'] ?? null;
+		$article->quantity = $validated['quantity'] ?? null;
+		$article->price = $validated['price'] ?? null;
+		$article->discount = $validated['discount'] ?? null;
+		$article->category_id = $validated['category_id'] ?? null;
+		$article->attributes = $validated['attributes'] ?? null;
+		$article->img_urls = $validated['img_urls'] ?? null;
+        $article->artisan_id = $user->id;
+        
+        $article->save();
+
+        $data = [
+            'success'  => true,
+            'article'  => $article
+        ];
+
+        return response()->json($data);
+    }
+
+    public function destroyArticle(Request $request, Article $article) {
+        $user = Auth::getUser($request, Auth::ARTISAN);
+
+        if ($user->id !== $article->artisan_id) {
+            $data = [
+                "error" => true,
+                "message" => "Une erreure est survene!"
+            ];
+            
+            return response()->json($data, 401);
+        }
+
+        $article->delete();
+
+        $data = [
+            'success' => true,
+            'article' => $article
         ];
 
         return response()->json($data);

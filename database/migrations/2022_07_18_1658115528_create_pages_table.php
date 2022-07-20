@@ -17,7 +17,8 @@ class CreatePagesTable extends Migration
             $table->id();
 			$table->foreignId('artisan_id')
 			->constrained()
-			->onDelete('cascade');
+			->onDelete('cascade')
+            ->unique();
 			$table->text('content')->nullable();
             $table->boolean('is_active')->nullable()->default(true);
 			$table->string('title');

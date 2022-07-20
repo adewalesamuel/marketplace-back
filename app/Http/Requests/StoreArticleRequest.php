@@ -30,11 +30,10 @@ class StoreArticleRequest extends FormRequest
 			'quantity' => 'required|integer',
 			'price' => 'required|integer',
 			'discount' => 'nullable|integer',
-			'artisan_id' => 'required|integer|exists:artisans,id',
+			'artisan_id' => 'nullable|integer|exists:artisans,id',
+			'category_id' => 'required|integer|exists:categories,id',
 			'attributes' => 'nullable|json',
-			'period' => 'nullable|integer',
-			'address' => 'nullable|string',
-			'img_url' => 'nullable|string',
+			'img_urls' => 'nullable|string',
 			
         ];
     }

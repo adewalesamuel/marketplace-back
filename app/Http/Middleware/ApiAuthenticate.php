@@ -25,11 +25,12 @@ class ApiAuthenticate
         $token = $request->header('Authorization') ? explode(" ", $request->header('Authorization'))[1] : null;
 
         switch (Arr::first($guards)) {
-            case 'admin':
-                $user = Administrateur::where("api_token", $token);
+            case 'admins':
+                $user = Admin::where("api_token", $token);
                 break;
-            case 'artisan':
+            case 'artisans':
                 $user = Artisan::where("api_token", $token);
+                break;
             default:
                 $user = Client::where("api_token", $token);
                 break;
