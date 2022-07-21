@@ -34,6 +34,7 @@ use App\Http\Controllers\Auth\ApiClientAuthController;
 
 Route::get('artisans', [ArtisanController::class, 'index']);
 Route::get('artisans/{artisan}', [ArtisanController::class, 'show']);
+Route::get('artisans/{artisan}/articles', [ArtisanController::class, 'articles']);
 
 Route::get('souscriptionpacks', [SouscriptionPackController::class, 'index']);
 Route::get('souscriptionpacks/{souscriptionpack}', [SouscriptionPackController::class, 'show']);
@@ -46,10 +47,7 @@ Route::get('categories/{slug}/articles', [CategoryController::class, 'articles']
 Route::get('articles', [ArticleController::class, 'index']);
 Route::get('articles/{article}', [ArticleController::class, 'show']);
 
-Route::get('orders', [OrderController::class, 'index']);
-Route::get('orders/{order}', [OrderController::class, 'show']);
-
-Route::post('passwordforgottens', [PasswordForgottenController::class, 'store']);
+Route::post('passwordforgotten', [PasswordForgottenController::class, 'store']);
 
 Route::get('pages/{page}', [PageController::class, 'show']);
 
@@ -90,6 +88,10 @@ Route::prefix('artisan')->group(function(){
 
         Route::get('quotes', [QuoteController::class, 'index']);
         Route::get('quotes/{quote}', [QuoteController::class, 'show']);
+
+        Route::get('orders', [ArtisanController::class, 'orders']);
+        Route::get('orders/{order}', [ArtisanController::class, 'showOrder']);
+        Route::delete('orders/{order}', [ArtisanController::class, 'destroyOrder']);
     });
 });
 
@@ -125,6 +127,8 @@ Route::prefix('admin')->group(function(){
         Route::put('/articles/{article}', [ArticleController::class, 'update']);
         Route::delete('/articles/{article}', [ArticleController::class, 'destroy']);
     
+        Route::get('orders', [ArtisanController::class, 'orders']);
+        Route::get('orders/{order}', [OrderController::class, 'show']);
         Route::post('/orders', [OrderController::class, 'store']);
         Route::put('/orders/{order}', [OrderController::class, 'update']);
         Route::delete('/orders/{order}', [OrderController::class, 'destroy']);

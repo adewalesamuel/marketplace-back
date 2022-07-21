@@ -70,6 +70,8 @@ class PageController extends Controller
      */
     public function show(Page $page)
     {
+        $page = Page::with(['artisan'])->find($page->id);
+        
         $data = [
             'success' => true,
             'page' => $page

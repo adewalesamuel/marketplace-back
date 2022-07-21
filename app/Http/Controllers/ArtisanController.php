@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Artisan;
 use App\Models\Page;
 use App\Models\Article;
+use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreArtisanRequest;
 use App\Http\Requests\UpdateArtisanRequest;
@@ -154,6 +155,16 @@ class ArtisanController extends Controller
         return response()->json($data);
     }
 
+    public function articles(Request $request, Artisan $artisan){
+        $data = [
+            "success" => true,
+            "articles" => $artisan->articles
+            ->sortByDesc('created_at')->values()->all()
+        ];
+
+        return response()->json($data);
+    }
+
     public function storePage(StorePageRequest $request) {
         $user = Auth::getUser($request, Auth::ARTISAN);
         $validated = $request->validated();
@@ -224,7 +235,7 @@ class ArtisanController extends Controller
         $validated = $request->validated();
 
         $article->name = $validated['name'] ?? null;
-		$article->description = $validated['description'] ?? null;
+        $article->slug = Str::slug($validated['name']) . random_int(1000, 9999);
 		$article->type = $validated['type'] ?? null;
 		$article->quantity = $validated['quantity'] ?? null;
 		$article->price = $validated['price'] ?? null;
@@ -261,6 +272,42 @@ class ArtisanController extends Controller
         $data = [
             'success' => true,
             'article' => $article
+        ];
+
+        return response()->json($data);
+    }
+
+    public function orders(Request $request) {
+        $user = Auth::getUser($request, Auth::ARTISAN);
+        $article_ids = collect($user->articles)->map(function($article) {return $article->id;});
+        $orders = Order::whereIn('article_id', [...$article_ids])
+        ->with(['article', 'client'])->orderBy('created_at', 'desc')->get();
+
+        $data = [
+            "success" => true,
+            "orders" => $orders
+        ];
+
+        return response()->json($data);
+    }
+
+    public function destroyOrder(Request $request, Order $order) {
+        $user = Auth::getUser($request, Auth::ARTISAN);
+        
+        if ($user->id !== $order->article->artisan_id) {
+            $data = [
+                "error" => true,
+                "message" => "Une erreure est survene!"
+            ];
+            
+            return response()->json($data, 401);
+        }
+
+        $order->delete();
+
+        $data = [
+            "success" => true,
+            "order" => $order
         ];
 
         return response()->json($data);

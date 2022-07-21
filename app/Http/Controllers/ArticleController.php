@@ -112,6 +112,7 @@ class ArticleController extends Controller
         $validated = $request->validated();
 
         $article->name = $validated['name'] ?? null;
+        $article->slug = Str::slug($validated['name']) . random_int(1000, 9999);
 		$article->description = $validated['description'] ?? null;
 		$article->type = $validated['type'] ?? null;
 		$article->quantity = $validated['quantity'] ?? null;
