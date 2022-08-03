@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
@@ -146,6 +147,40 @@ class ArticleController extends Controller
         $data = [
             'success' => true,
             'article' => $article
+        ];
+
+        return response()->json($data);
+    }
+
+    public function trending(Request $request) {
+        $parent_categories = Category::whereNull('parent_category')
+        ->orderBy('created_at', 'desc')
+        ->with(['categories'])->limit(4)->get();
+
+        $categories = [];
+
+        for ($i=0; $i < count($parent_categories); $i++) { 
+            $parent_categorie = $parent_categories[$i];
+            $sub_categories_ids = collect($parent_categorie->categories)->map(function($sub_categorie) {
+                return $sub_categorie->id;
+            });
+            
+            $categorie = $parent_categorie;
+            $articles = Article::whereIn('category_id', [...$sub_categories_ids])
+            ->orderBy('created_at', 'desc')
+            ->limit(8)->get();
+
+            $categorie['sub_categories_ids'] = $sub_categories_ids;
+            $categorie['articles'] = $articles;
+
+            unset($categorie['categories']);
+
+            $categories[] = $categorie;
+        }
+
+        $data = [
+            "success" => true,
+            "categories" => $categories
         ];
 
         return response()->json($data);

@@ -21,8 +21,10 @@ class CategoryController extends Controller
     {
         $data = [
             'success' => true,
-            'categories' => Category::where('id', '>', -1)
-            ->orderBy('created_at', 'desc')->get()
+            'categories' => Category::whereNull('parent_category')
+            ->orderBy('created_at', 'desc')
+            ->with(['categories'])
+            ->get()
         ];
 
         return response()->json($data);

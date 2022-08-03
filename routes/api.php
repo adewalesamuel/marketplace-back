@@ -15,6 +15,7 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\BoostPackController;
 use App\Http\Controllers\BoostController;
+use App\Http\Controllers\FrontController;
 use App\Http\Controllers\ReviewsController;
 use App\Http\Controllers\Auth\ApiAdminAuthController;
 use App\Http\Controllers\Auth\ApiArtisanAuthController;
@@ -45,6 +46,7 @@ Route::get('categories/{slug}/artisans', [CategoryController::class, 'artisans']
 Route::get('categories/{slug}/articles', [CategoryController::class, 'articles']);
 
 Route::get('articles', [ArticleController::class, 'index']);
+Route::get('articles/trending', [ArticleController::class, 'trending']);
 Route::get('articles/{article}', [ArticleController::class, 'show']);
 
 Route::post('passwordforgotten', [PasswordForgottenController::class, 'store']);
