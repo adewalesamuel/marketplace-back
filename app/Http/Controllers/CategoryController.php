@@ -159,9 +159,17 @@ class CategoryController extends Controller
     }
 
     public function articles(Request $request, string $slug) {
-        $category = Category::where('slug', $slug)->first();
-        $articles = Article::where('category_id', $category->id)
-        ->with(['category', 'artisan'])->orderBy('created_at', 'desc')
+        $category = Category::where('slug', $slug)->with(['categories'])->first();
+        $sub_categories_ids = [];
+
+        if (isset($category->categories)) {
+            $sub_categories_ids = collect($category->categories)->map(function($sub_categorie) {
+                return $sub_categorie->id;
+            });
+        }
+
+        $articles = Article::whereIn('category_id', $sub_categories_ids)
+        ->orderBy('created_at', 'desc')
         ->paginate(env('PAGINATE'));
 
         $data = [
