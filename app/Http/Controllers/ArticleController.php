@@ -20,8 +20,10 @@ class ArticleController extends Controller
     {
         $data = [
             'success' => true,
-            'articles' => Article::where('id', '>', -1)->with(['artisan', 'category'])
-            ->orderBy('created_at', 'desc')->get()
+            'articles' => Article::where('id', '>', -1)
+            ->with(['artisan', 'category'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(env('PAGINATE'))
         ];
 
         return response()->json($data);

@@ -28,7 +28,8 @@ class ArtisanController extends Controller
         $data = [
             'success' => true,
             'artisans' => Artisan::where('id', '>', -1)
-            ->with(['page'])->orderBy('created_at', 'desc')->get()
+            ->with(['page'])->orderBy('created_at', 'desc')
+            ->paginate(env('PAGINATE'))
         ];
 
         return response()->json($data);
