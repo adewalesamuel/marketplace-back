@@ -160,15 +160,17 @@ class CategoryController extends Controller
 
     public function articles(Request $request, string $slug) {
         $category = Category::where('slug', $slug)->with(['categories'])->first();
-        $sub_categories_ids = [];
+        $categories_ids = [];
 
-        if (isset($category->categories)) {
-            $sub_categories_ids = collect($category->categories)->map(function($sub_categorie) {
+        if (count($category->categories) > 0) {
+            $categories_ids = collect($category->categories)->map(function($sub_categorie) {
                 return $sub_categorie->id;
             });
+        }else {
+            $categories_ids[] = $category->id;
         }
 
-        $articles = Article::whereIn('category_id', $sub_categories_ids)
+        $articles = Article::whereIn('category_id', $categories_ids)
         ->orderBy('created_at', 'desc')
         ->paginate(env('PAGINATE'));
 

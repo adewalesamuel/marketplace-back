@@ -47,7 +47,7 @@ Route::get('categories/{slug}/articles', [CategoryController::class, 'articles']
 
 Route::get('articles', [ArticleController::class, 'index']);
 Route::get('articles/trending', [ArticleController::class, 'trending']);
-Route::get('articles/{article}', [ArticleController::class, 'show']);
+Route::get('articles/{slug}', [ArticleController::class, 'show']);
 
 Route::post('passwordforgotten', [PasswordForgottenController::class, 'store']);
 
@@ -56,14 +56,16 @@ Route::get('pages/{page}', [PageController::class, 'show']);
 Route::get('boost_packs', [BoostPackController::class, 'index']);
 Route::get('boost_packs/{boostpack}', [BoostPackController::class, 'show']);
 
-Route::get('reviewss', [ReviewsController::class, 'index']);
-Route::get('reviewss/{reviews}', [ReviewsController::class, 'show']);
+Route::get('reviews', [ReviewsController::class, 'index']);
+Route::get('reviews/{reviews}', [ReviewsController::class, 'show']);
 
 Route::prefix('client')->group(function(){
     Route::post('/login', [ApiClientAuthController::class, 'login']);
+    Route::post('/register', [ClientController::class, 'store']);
     
     Route::middleware('auth.api_token:clients')->group(function () {
         //Client routes
+        Route::put('/', [ClientController::class, 'update']);
         Route::post('/logout', [ApiClientAuthController::class, 'logout']);
 
         Route::get('/orders', [ClientController::class, 'orders']);

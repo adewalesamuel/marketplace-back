@@ -29,7 +29,9 @@ class UpdateOrderRequest extends FormRequest
 			'quantity' => 'nullable|integer',
 			'price' => 'required|integer',
 			'payment_status' => 'nullable|string',
-			'payment_method' => 'required|string',
+			'payment_method' => 'nullable|string',
+            'shipping_place' => 'string|nullable',
+            'additionnal_informations' => 'string|nullable'
 			
         ];
     }

@@ -54,6 +54,8 @@ class OrderController extends Controller
 		$order->price = $validated['price'] ?? null;
 		$order->payment_status = $validated['payment_status'] ?? null;
 		$order->payment_method = $validated['payment_method'] ?? null;
+		$order->shipping_place = $validated['shipping_place'] ?? null;
+		$order->additionnal_informations = $validated['additionnal_informations'] ?? null;
 		
         $order->save();
 
@@ -109,6 +111,8 @@ class OrderController extends Controller
 		$order->price = $validated['price'] ?? null;
 		$order->payment_status = $validated['payment_status'] ?? null;
 		$order->payment_method = $validated['payment_method'] ?? null;
+        $order->shipping_place = $validated['shipping_place'] ?? null;
+		$order->additionnal_informations = $validated['additionnal_informations'] ?? null;
 		
         $order->save();
 

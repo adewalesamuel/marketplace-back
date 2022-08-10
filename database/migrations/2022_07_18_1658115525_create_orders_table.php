@@ -23,7 +23,8 @@ class CreateOrdersTable extends Migration
 			->onDelete('cascade');
 			$table->integer('quantity')->nullable()->default(1);
 			$table->integer('price');
-			$table->enum('payment_status', ['paid', 'pending', 'canceled'])->nullable()->default('pending');
+			$table->enum('payment_status', ['paid', 'pending', 'canceled'])
+            ->nullable()->default('pending');
 			$table->string('payment_method');
 			$table->softDeletes();
 			$table->timestamps();

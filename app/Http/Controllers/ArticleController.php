@@ -79,9 +79,9 @@ class ArticleController extends Controller
      * @param  \App\Models\Article  $article
      * @return \Illuminate\Http\Response
      */
-    public function show(Article $article)
+    public function show(string $slug)
     {
-        $article = Article::where('id', $article->id)
+        $article = Article::where('slug', $slug)
         ->with(['artisan', 'category'])->first();
         
         $data = [
