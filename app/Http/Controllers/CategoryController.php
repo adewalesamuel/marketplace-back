@@ -171,6 +171,7 @@ class CategoryController extends Controller
         }
 
         $articles = Article::whereIn('category_id', $categories_ids)
+        ->with(['category'])
         ->orderBy('created_at', 'desc')
         ->paginate(env('PAGINATE'));
 
