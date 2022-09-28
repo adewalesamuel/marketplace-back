@@ -162,12 +162,12 @@ class CategoryController extends Controller
         $category = Category::where('slug', $slug)->with(['categories'])->first();
         $categories_ids = [];
 
-        if (count($category->categories) > 0) {
+        if ($category && count($category->categories) > 0) {
             $categories_ids = collect($category->categories)->map(function($sub_categorie) {
                 return $sub_categorie->id;
             });
         }else {
-            $categories_ids[] = $category->id;
+            $categories_ids[] = $category->id ?? "";
         }
 
         $articles = Article::whereIn('category_id', $categories_ids)

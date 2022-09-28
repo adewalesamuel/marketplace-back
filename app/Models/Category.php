@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Database\Factories\CategoryFactory;
 
 class Category extends Model
 {
@@ -28,6 +29,16 @@ class Category extends Model
     public function categories()
     {
         return $this->hasMany(Category::class, 'parent_category');
+    }
+
+    /**
+     * Create a new factory instance for the model.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    protected static function newFactory()
+    {
+        return CategoryFactory::new();
     }
 
 }
